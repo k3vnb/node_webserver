@@ -1,3 +1,1 @@
-var hello = require('./firstClassFunctions.js');
-
-hello();
+const http = require('http');
