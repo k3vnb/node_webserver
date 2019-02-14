@@ -2,16 +2,26 @@ const http = require('http');
 const fs = require('fs');
 
 http.createServer((req, res) => {
+
+    if (req.url === '/'){
     //http request starts with whats in the head - status code + headers & MIME types
     res.writeHead(200, { 'Content-Type': 'text/html' });
     // send the body w/ carriage return to represent end of data
-    let html = fs.readFileSync(__dirname + '/index.htm', 'utf8');
-    const message = "Hello world...";
-    //dynamic templating
-    html = html.replace('{Message}', message)
-    res.end(html);
-    // where does Node map to port? the .listen method below
+    fs.createReadStream(__dirname + '/index.htm', 'utf8').pipe(res);
+    }
+    
+    if (req.url === '/api'){
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    const obj = {
+        firstname: 'John',
+        lastname: 'Doe'
+    };
+    res.end(JSON.stringify(obj));
+    }
+
+
 }).listen(1337, '127.0.0.1');
 
-// in terminal run $ node app.js
-// 'hello world' will be printed to browser when you go to <localhost:1337>
+// in terminal run $ node app.js, go to <localhost:1337>
+
+
