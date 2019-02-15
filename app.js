@@ -1,31 +1,12 @@
-const http = require('http');
-const fs = require('fs');
+const express = require('express');
+const app = express();
 
-http.createServer((req, res) => {
+const port = process.env.PORT || 3000;
 
-    if (req.url === '/'){
-        //http request starts with whats in the head - status code + headers & MIME types
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        // send the body w/ carriage return to represent end of data
-        fs.createReadStream(__dirname + '/index.htm', 'utf8').pipe(res);
-    }
+app.get('/', function(req, res) {
+    res.send(`<html><head></head><body><h1>HelloWorld!</h1></body>`)
+})
 
-    else if (req.url === '/api'){
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        const obj = {
-            firstname: 'John',
-            lastname: 'Doe'
-        };
-        res.end(JSON.stringify(obj));
-    }
-
-   else { res.writeHead(404, { 'Content-Type': 'text/html' });
-   // send the body w/ carriage return to represent end of data
-   fs.createReadStream(__dirname + '/error404.htm', 'utf8').pipe(res);;
-   }
-
-}).listen(1337, '127.0.0.1');
-
-// in terminal run $ node app.js, go to <localhost:1337>
+app.listen(port);
 
 
