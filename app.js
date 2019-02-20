@@ -1,6 +1,48 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+var mongoose = require('mongoose');
+
+const config = require('./.env');
+
+
+mongoose.connect(`mongodb://${config.username}:${config.password}@ds253889.mlab.com:53889/addressbook`, { useNewUrlParser: true });
+
+//mongoose provides a constructor called Schema
+const Schema = mongoose.Schema;
+
+const personSchema = new Schema({
+    firstname: String,
+    lastname: String,
+    address: String
+});
+
+const Person = mongoose.model('Person', personSchema);
+const john = Person({
+    firstname: 'John',
+    lastname: 'Smith',
+    address: '123 Bluejay Way'
+});
+
+// save the user
+john.save(err => {
+    if (err) throw err;
+
+    console.log('person saved!');
+});
+
+var jane = Person({
+    firstname: 'Jane',
+    lastname: 'Doe',
+    address: '555 Main St'
+});
+
+// save the user
+jane.save(err => {
+    if (err) throw err;
+
+    console.log('person saved!');
+})
 
 const port = process.env.PORT || 3000;
 
@@ -15,8 +57,21 @@ const jsonParser = bodyParser.json();
 app.set('view engine', 'ejs'); 
 
 //it will call index.ejs
-app.get('/', function(req, res) {
-    res.render('index')
+app.get('/', function(req, res, next) {
+    res.render('index');
+    console.log('Request url: ' + req.url);
+
+    //get all the users
+    Person.find({
+        //specific queries could go here
+    }, (err, users) => {
+        if (err) throw err;
+
+        //object of all the users
+        console.log(users);
+    });
+     
+    next();
 });
 
 
